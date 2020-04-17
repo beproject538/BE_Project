@@ -25,6 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class ConnectionPageActivity extends AppCompatActivity {
 
@@ -36,7 +37,13 @@ public class ConnectionPageActivity extends AppCompatActivity {
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
 
-    OkHttpClient client = new OkHttpClient().newBuilder().build();
+    OkHttpClient client = new OkHttpClient().newBuilder()
+            .connectTimeout(1, TimeUnit.MINUTES)
+            .readTimeout(1,TimeUnit.MINUTES)
+            .writeTimeout(1,TimeUnit.MINUTES)
+            //.callTimeout(120, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(false)
+            .build();
 
 
     void getConnectionApppost(String URL, String requestBody) throws IOException, InterruptedException {
@@ -139,7 +146,7 @@ public class ConnectionPageActivity extends AppCompatActivity {
     void getCredentialsPost(String URL, String requestBody, final String token) throws IOException, InterruptedException {
         RequestBody body = RequestBody.create(JSON, requestBody);
         Request request = new Request.Builder()
-                .addHeader("Authorization",token)
+                .addHeader("Authorization","Bearer "+token)
                 .url(URL)
                 .post(body)
                 .build();
@@ -229,12 +236,7 @@ public class ConnectionPageActivity extends AppCompatActivity {
                 try{
                     listenForCredentialOfferPost(url+"listenForCredentialOffer",requestBody);
                     String credOfferStatus = myPrefs.getString("listenForCredentialOffer",null);
-                    /* trxid": 17,
-                        "schemaname": "College id7",
-                        "senderdid": "UUmmbA1SdGAXchpkGpQzwc",
-                        "recipientdid": "FJSBgbH5DyTDeSzHnixpwm",
-                        "status": "offered"
-                        */
+
                      JSONArray arr = new JSONArray(credOfferStatus);
                     for(int i=0;i<arr.length();i++){
                         JSONObject j = arr.getJSONObject(i);
@@ -257,6 +259,9 @@ public class ConnectionPageActivity extends AppCompatActivity {
                     String credReqResponse = myPrefs.getString("createCredentialRequest", null);
                     credOffer.append("\n\n"+credReqResponse);
 
+                    credReqBody.remove("did");
+                    credReqBody.put("name","College id2");
+                    String credBody = credReqBody.toString();
                     getCredentialsPost(indyurl+"getCredentials","",token);
                     String credentials = myPrefs.getString("credentials",null);
 

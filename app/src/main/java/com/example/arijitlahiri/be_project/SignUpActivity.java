@@ -66,9 +66,9 @@ public class SignUpActivity extends AppCompatActivity {
             = MediaType.get("application/json; charset=utf-8");
 
     OkHttpClient client = new OkHttpClient().newBuilder()
-            .connectTimeout(2,TimeUnit.MINUTES)
-            .readTimeout(2,TimeUnit.MINUTES)
-            .writeTimeout(2,TimeUnit.MINUTES)
+            .connectTimeout(15,TimeUnit.MINUTES)
+            .readTimeout(15,TimeUnit.MINUTES)
+            .writeTimeout(15,TimeUnit.MINUTES)
             //.callTimeout(120, TimeUnit.SECONDS)
             .retryOnConnectionFailure(false)
             .build();
