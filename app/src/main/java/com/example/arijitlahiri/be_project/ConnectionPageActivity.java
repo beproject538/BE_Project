@@ -136,6 +136,38 @@ public class ConnectionPageActivity extends AppCompatActivity {
         countDownLatch.await();
         //return res;
     }
+    void getCredentialsPost(String URL, String requestBody, final String token) throws IOException, InterruptedException {
+        RequestBody body = RequestBody.create(JSON, requestBody);
+        Request request = new Request.Builder()
+                .addHeader("Authorization",token)
+                .url(URL)
+                .post(body)
+                .build();
+
+        //final String res ;
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("status","Request Failed"+e);
+                call.cancel();
+                countDownLatch.countDown();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                //Log.d("Res",response.body().string());
+                SharedPreferences myPrefs = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = myPrefs.edit();
+                editor.putString("credentials",response.body().string());
+                editor.commit();
+
+                countDownLatch.countDown();
+            }
+        });
+        countDownLatch.await();
+        //return res;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,6 +194,7 @@ public class ConnectionPageActivity extends AppCompatActivity {
 
         final String url ="http://ec2-13-235-238-26.ap-south-1.compute.amazonaws.com:8080/";
 
+        final String indyurl = "http://ec2-13-235-238-26.ap-south-1.compute.amazonaws.com:8082/";
         final JSONObject jsonBody = new JSONObject();
         try {
             jsonBody.put("did", did);
@@ -215,6 +248,7 @@ public class ConnectionPageActivity extends AppCompatActivity {
                     JSONObject credReqBody = new JSONObject();
                     try {
                         credReqBody.put("recipientDid", ConDid);
+
                         credReqBody.put("did", did);
                     }
                     catch(JSONException e){ }
@@ -222,6 +256,11 @@ public class ConnectionPageActivity extends AppCompatActivity {
                     createCredentialRequestPost(url+"createCredentialRequest",credReq,token);
                     String credReqResponse = myPrefs.getString("createCredentialRequest", null);
                     credOffer.append("\n\n"+credReqResponse);
+
+                    getCredentialsPost(indyurl+"getCredentials","",token);
+                    String credentials = myPrefs.getString("credentials",null);
+
+                    credOffer.setText(credentials);
                 }
                 catch(final Exception e){}
             }

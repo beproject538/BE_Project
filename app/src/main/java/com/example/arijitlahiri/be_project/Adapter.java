@@ -59,7 +59,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.logo.setImageResource(R.mipmap.ic_launcher_round);
-        holder.did.setText("Did : "+mData.get(position).getDid());
+        holder.did.setText(mData.get(position).getDid());
         holder.name.setText(mData.get(position).getName());
 
         holder.view.setOnClickListener(new View.OnClickListener() {
