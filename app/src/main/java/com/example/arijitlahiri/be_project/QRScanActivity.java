@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.util.Log;
 import android.widget.Toast;
+import android.support.v4.content.ContextCompat;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import com.google.zxing.Result;
@@ -23,6 +26,13 @@ public class QRScanActivity extends AppCompatActivity implements  ZXingScannerVi
         mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
         //setContentView(mScannerView);
         setContentView(R.layout.activity_qrscan);
+
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_DENIED){
+            ActivityCompat.requestPermissions(QRScanActivity.this, new String[] {android.Manifest.permission.CAMERA}, 1);
+
+        }
+
 
         cancel = findViewById(R.id.cancel);
         mScannerView = (ZXingScannerView) findViewById(R.id.zxscan);

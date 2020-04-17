@@ -24,15 +24,15 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         ImageView logo;
-        TextView conid;
-        TextView inviter;
+        TextView did;
+        TextView name;
         Button view;
 
         public MyViewHolder(View v) {
             super(v);
             logo = v.findViewById(R.id.Logo);
-            conid = v.findViewById(R.id.conid);
-            inviter = v.findViewById(R.id.inviter);
+            did = v.findViewById(R.id.did);
+            name = v.findViewById(R.id.name);
             view = v.findViewById(R.id.viewButton);
         }
     }
@@ -59,14 +59,15 @@ public class Adapter extends RecyclerView.Adapter<Adapter.MyViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         holder.logo.setImageResource(R.mipmap.ic_launcher_round);
-        holder.conid.setText(mData.get(position).getConid());
-        holder.inviter.setText(mData.get(position).getInviter());
+        holder.did.setText("Did : "+mData.get(position).getDid());
+        holder.name.setText(mData.get(position).getName());
 
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent ConnIntent = new Intent(mContext, ConnectionPageActivity.class);
-                ConnIntent.putExtra("conid", holder.conid.getText());
+                ConnIntent.putExtra("did", holder.did.getText());
+                ConnIntent.putExtra("name", holder.name.getText());
                 mContext.startActivity(ConnIntent);
             }
         });

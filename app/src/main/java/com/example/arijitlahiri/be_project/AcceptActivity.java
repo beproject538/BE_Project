@@ -34,14 +34,15 @@ public class AcceptActivity extends AppCompatActivity {
     ImageView userLogo, orgLogo;
     Button deny,accept;
     String scanResult;
+    String token, did, recipientDid, recipientToken;
 
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
 
     OkHttpClient client = new OkHttpClient().newBuilder()
-            .connectTimeout(2,TimeUnit.MINUTES)
-            .readTimeout(2,TimeUnit.MINUTES)
-            .writeTimeout(2,TimeUnit.MINUTES)
+            .connectTimeout(1,TimeUnit.MINUTES)
+            .readTimeout(1,TimeUnit.MINUTES)
+            .writeTimeout(1,TimeUnit.MINUTES)
             //.callTimeout(120, TimeUnit.SECONDS)
             .retryOnConnectionFailure(false)
             .build();
@@ -67,13 +68,17 @@ public class AcceptActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                //Log.d("Res",response.body().string());
-                SharedPreferences myPrefs = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = myPrefs.edit();
+                Log.d("Res",response.body().string());
+                //SharedPreferences myPrefs = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+                //SharedPreferences.Editor editor = myPrefs.edit();
                 try {
-                    JSONObject Result = new JSONObject(response.body().string());
+                    //JSONObject Result = new JSONObject(response.body().string());
+                    //String msg = Result.getString("msg");
+                    //if(msg.equals("Connected yay!!!!  UwU")){
 
-                }catch (JSONException e){}
+                    //}
+
+                }catch (final Exception e){}
                 countDownLatch.countDown();
             }
         });
@@ -93,17 +98,24 @@ public class AcceptActivity extends AppCompatActivity {
         deny = findViewById(R.id.deny);
         accept = findViewById(R.id.accept);
         demoText = findViewById(R.id.demoText);
+        final String baseURL = "http://ec2-13-235-238-26.ap-south-1.compute.amazonaws.com:8080/";
 
-        SharedPreferences myPrefs = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+        final SharedPreferences myPrefs = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
 
-        //userName.setText(myPrefs.getString("name", null));
+        token = myPrefs.getString("token",null);
+        did = myPrefs.getString("did",null);
+
+        userName.setText(myPrefs.getString("name", null));
         Bundle bundle  =  getIntent().getExtras();
         scanResult = bundle.getString("result");
+
 
         demoText.setVisibility(View.VISIBLE);
         try{
             JSONObject j = new JSONObject(scanResult);
             demoText.setText("Scan Result\nDID : "+j.getString("did")+"\nToken : "+j.getString("token"));
+            recipientDid = j.getString("did");
+            recipientToken = j.getString("token");
         }
         catch(JSONException e){
 
@@ -121,8 +133,26 @@ public class AcceptActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                JSONObject jsonBody = new JSONObject();
+                try {
+                    jsonBody.put("did", did);
+                    Log.i("did", did);
+                    jsonBody.put("recipientDid", recipientDid);
+                    Log.i("recipientDid", recipientDid);
+                    jsonBody.put("token", recipientToken);
+                    Log.i("token", recipientToken);
+                }
+                catch(JSONException e){
 
+                }
+                final String requestBody = jsonBody.toString();
+                try{
+                    initiateConnectionpost(baseURL+"initiateConnection",requestBody,token);
 
+                }
+                catch(final Exception e){
+
+                }
 
                 Intent forward = new Intent(AcceptActivity.this, MainActivity.class);
                 AcceptActivity.this.startActivity(forward);

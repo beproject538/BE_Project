@@ -5,13 +5,13 @@ import android.widget.ImageView;
 public class Item {
 
     private ImageView logo;
-    private String conid;
-    private String inviter;
+    private String did;
+    private String name;
 
-    public Item(ImageView logo, String conid, String inviter) {
+    public Item(ImageView logo, String did, String name) {
         this.logo = logo;
-        this.conid = conid;
-        this.inviter = inviter;
+        this.did = did;
+        this.name = name;
     }
 
     public ImageView getLogo() {
@@ -22,19 +22,22 @@ public class Item {
         this.logo = logo;
     }
 
-    public String getConid() {
-        return conid;
+    public String getDid() {
+        return did;
     }
 
-    public void setConid(String conid) {
-        this.conid = conid;
+    public void setDid(String did) {
+        this.did = did;
     }
 
-    public String getInviter() {
-        return inviter;
+    public String getName() {
+        return name;
     }
 
-    public void setInviter(String inviter) {
-        this.inviter = inviter;
+    public void setName(String name) {
+        this.name = name;
     }
+
+
+
 }

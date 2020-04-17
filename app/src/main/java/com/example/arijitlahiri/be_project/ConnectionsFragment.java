@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +15,19 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.widget.Toast;
 
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import java.io.IOException;
+import java.util.TimerTask;
+import java.util.Timer;
+import android.os.Handler;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +54,7 @@ public class ConnectionsFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
-    String token,did,verkey,metadata;
+    String name,token,did,verkey,metadata;
 
     ArrayList<Item> mList = new ArrayList<>();
 
@@ -79,6 +86,45 @@ public class ConnectionsFragment extends Fragment {
         return fragment;
     }
 
+    public static final MediaType JSON
+            = MediaType.get("application/json; charset=utf-8");
+
+    OkHttpClient client = new OkHttpClient().newBuilder().build();
+
+
+    void  getConnectionApppost(String URL, String requestBody) throws IOException, InterruptedException {
+        RequestBody body = RequestBody.create(JSON, requestBody);
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                //.addHeader("Authorization",token)
+                .url(URL)
+                .post(body)
+                .build();
+
+        final String res = "" ;
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d("status","Request Failed"+e);
+                call.cancel();
+                countDownLatch.countDown();
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                //Log.d("Res",response.body().string());
+                SharedPreferences myPrefs = getContext().getSharedPreferences("user", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = myPrefs.edit();
+                editor.putString("getConnectionsApp",response.body().string());
+                editor.commit();
+
+                countDownLatch.countDown();
+            }
+        });
+        countDownLatch.await();
+        //return res;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,11 +140,10 @@ public class ConnectionsFragment extends Fragment {
 
         View RootView = inflater.inflate(R.layout.fragment_connections, container, false);
         // Inflate the layout for this fragment
-        final TextView textView = (TextView)RootView.findViewById(R.id.Response);
 
         recyclerView = (RecyclerView) RootView.findViewById(R.id.Connection_list);
 
-        final ImageView logo =  RootView.findViewById(R.id.Logo);;
+        final ImageView logo =  RootView.findViewById(R.id.logo);;
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -113,54 +158,52 @@ public class ConnectionsFragment extends Fragment {
         did = myPrefs.getString("did",null);
         verkey = myPrefs.getString("verkey",null);
         metadata = myPrefs.getString("metadata",null);
+        name = myPrefs.getString("name",null);
 
-        Toast.makeText(getActivity(),"Token : "+token+"\nDID : "+did+"\nVerkey : "+verkey+"\nMetdata : "+metadata,Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(),"Token : "+token+"\nDID : "+did+"\n",Toast.LENGTH_LONG).show();
+
+        Log.i("Name:",name);
+        Log.i("DID:",did);
+        Log.i("Token:",token);
 
 
-
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
         String url ="http://ec2-13-235-238-26.ap-south-1.compute.amazonaws.com:8080/";
 
-        // Request a string response from the provided URL.
-        textView.setText("\n\n");
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        String R = new String();
 
-                        try {
-                            JSONArray Res = new JSONArray(response);
+        JSONObject jsonBody = new JSONObject();
+        try {
+            jsonBody.put("did", did);
+        }
+        catch(JSONException e){
 
-                            for(int i=0;i<Res.length();i++){
-                                JSONObject j = Res.getJSONObject(i);
-                                String conid = j.getString("conid");
-                                String inviter = j.getString("inviter");
-                                String invitee = j.getString("invitee");
-                                String status = j.getString("status");
+        }
+        final String requestBody = jsonBody.toString();
 
-                                mList.add(new Item(logo,conid,inviter));
-                                //textView.append("Connection ID : " + conid + "\nInviter : " + inviter + "\nInvitee : " + invitee + "\nStatus : " + status + "\n\n");
-                            }
+        try {
+            getConnectionApppost(url+"getConnectionsApp",requestBody);
 
-                            // specify an adapter (see also next example)
-                            mAdapter = new Adapter(getActivity(),mList);
-                            recyclerView.setAdapter(mAdapter);
-                        }
-                        catch (JSONException e){
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                textView.setText(error.toString());
+            String response = myPrefs.getString("getConnectionsApp",null);
+
+            JSONArray Res = new JSONArray(response);
+            if(Res.length()>0) {
+                for (int i = 0; i < Res.length(); i++) {
+                    JSONObject j = Res.getJSONObject(i);
+                    String did = j.getString("did");
+                    String name = j.getString("name");
+                    String status = j.getString("status");
+
+                    mList.add(new Item(logo, did, name));
+                    //textView.append("Connection ID : " + conid + "\nInviter : " + inviter + "\nInvitee : " + invitee + "\nStatus : " + status + "\n\n");
+                }
             }
-        });
 
-// Add the request to the RequestQueue.
-        queue.add(stringRequest);
+            // specify an adapter (see also next example)
+            mAdapter = new Adapter(getActivity(),mList);
+            recyclerView.setAdapter(mAdapter);
+        }
+        catch (final Exception e){
+            e.printStackTrace();
+        }
 
         return RootView;
     }
