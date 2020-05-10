@@ -98,7 +98,8 @@ public class AcceptActivity extends AppCompatActivity {
         deny = findViewById(R.id.deny);
         accept = findViewById(R.id.accept);
         demoText = findViewById(R.id.demoText);
-        final String baseURL = "http://ec2-13-235-238-26.ap-south-1.compute.amazonaws.com:8080/";
+        final String baseURL = "http://ec2-13-127-141-57.ap-south-1.compute.amazonaws.com:8080/";
+
 
         final SharedPreferences myPrefs = getApplicationContext().getSharedPreferences("user", Context.MODE_PRIVATE);
 

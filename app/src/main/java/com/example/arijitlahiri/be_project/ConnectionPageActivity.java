@@ -199,9 +199,9 @@ public class ConnectionPageActivity extends AppCompatActivity {
         token = myPrefs.getString("token",null);
         did = myPrefs.getString("did",null);
 
-        final String url ="http://ec2-13-235-238-26.ap-south-1.compute.amazonaws.com:8080/";
+        final String url ="http://ec2-13-127-141-57.ap-south-1.compute.amazonaws.com:8080/";
 
-        final String indyurl = "http://ec2-13-235-238-26.ap-south-1.compute.amazonaws.com:8082/";
+        final String indyurl = "http://ec2-13-127-141-57.ap-south-1.compute.amazonaws.com:8082/";
         final JSONObject jsonBody = new JSONObject();
         try {
             jsonBody.put("did", did);
@@ -234,7 +234,7 @@ public class ConnectionPageActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 try{
-                    listenForCredentialOfferPost(url+"listenForCredentialOffer",requestBody);
+                    /*listenForCredentialOfferPost(url+"listenForCredentialOffer",requestBody);
                     String credOfferStatus = myPrefs.getString("listenForCredentialOffer",null);
 
                      JSONArray arr = new JSONArray(credOfferStatus);
@@ -245,7 +245,7 @@ public class ConnectionPageActivity extends AppCompatActivity {
                         credOffer.append("\nsenderdid:"+j.getString("senderdid"));
                         credOffer.append("\nrecipientdid:"+j.getString("recipientdid"));
                         credOffer.append("\nstatus"+j.getString("status"));
-                    }
+                    }*/
 
                     JSONObject credReqBody = new JSONObject();
                     try {
@@ -254,11 +254,11 @@ public class ConnectionPageActivity extends AppCompatActivity {
                         credReqBody.put("did", did);
                     }
                     catch(JSONException e){ }
-                    String credReq = credReqBody.toString();
+                    /*String credReq = credReqBody.toString();
                     createCredentialRequestPost(url+"createCredentialRequest",credReq,token);
                     String credReqResponse = myPrefs.getString("createCredentialRequest", null);
                     credOffer.append("\n\n"+credReqResponse);
-
+*/
                     credReqBody.remove("did");
                     credReqBody.put("name","College id2");
                     String credBody = credReqBody.toString();

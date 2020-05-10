@@ -47,7 +47,7 @@ public class ConnectionsTab extends AppCompatActivity {
 
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="http://ec2-13-235-238-26.ap-south-1.compute.amazonaws.com:8080/";
+        String url ="http://ec2-13-127-141-57.ap-south-1.compute.amazonaws.com:8080/";
 
     // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

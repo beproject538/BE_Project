@@ -165,7 +165,7 @@ public class SignUpActivity extends AppCompatActivity {
                 Log.d("Name", name);
 
                 //final RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-                final String baseURL = "http://ec2-13-235-238-26.ap-south-1.compute.amazonaws.com:8080/";
+                final String baseURL = "http://ec2-13-127-141-57.ap-south-1.compute.amazonaws.com:8080/";
                 JSONObject jsonBody = new JSONObject();
                 try {
                     jsonBody.put("name", name);
