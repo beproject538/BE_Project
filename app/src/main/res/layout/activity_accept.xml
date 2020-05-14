@@ -66,7 +66,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="10dp"
-                    android:text="Organization"
+                    android:text="Test3"
                     android:textColor="@color/colorPrimary"
                     android:textSize="20sp" />
             </LinearLayout>
@@ -84,7 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Org Wants to connect with you"
+                android:text="Test3 Wants to connect with you"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimary"
                 android:textSize="18sp" />
@@ -93,7 +93,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="80dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:weightSum="2">
@@ -102,35 +102,36 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/accept"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/sign_out_button_style"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:text="ACCEPT"
+                    android:textColor="@color/colorPrimaryDark" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center">
 
                 <Button
                     android:id="@+id/deny"
-                    android:layout_width="wrap_content"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:background="@drawable/sign_out_button_style"
                     android:backgroundTint="@color/colorPrimary"
                     android:text="DENY"
                     android:textColor="@color/colorPrimaryDark" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/accept"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/sign_out_button_style"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:text="ACCEPT"
-                    android:textColor="@color/colorPrimaryDark" />
-            </LinearLayout>
         </LinearLayout>
 
         <TextView
@@ -138,7 +139,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:text="Scan Result Text"
             android:visibility="invisible" />
     </LinearLayout>
 

@@ -3,6 +3,9 @@ package com.example.arijitlahiri.be_project;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -198,7 +201,7 @@ public class ConnectionPageActivity extends AppCompatActivity {
 
         viewCredential.setVisibility(View.GONE);
         storeCrdential.setVisibility(View.GONE);
-        credential.setVisibility(View.GONE);
+        //credential.setVisibility(View.GONE);
 
         Bundle bundle  =  getIntent().getExtras();
         ConDid = bundle.getString("did");
@@ -307,7 +310,9 @@ public class ConnectionPageActivity extends AppCompatActivity {
         viewCredButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                PopUpCred popUpClass = new PopUpCred();
+                
+                popUpClass.showPopupWindow(v,myPrefs.getString("credentials",null));
             }
         });
 
