@@ -17,7 +17,9 @@ import java.io.IOException;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -31,8 +33,10 @@ public class ConnectionPageActivity extends AppCompatActivity {
 
     String did,token,ConDid, ConName;
     JSONObject details;
-    TextView byline, conName, credOffer;
+    TextView byline, conName, credOffer, viewCredButton, attributes;
     ImageButton refresh, back;
+    Button viewCredential, storeCrdential;
+    LinearLayout credential;
 
     public static final MediaType JSON
             = MediaType.get("application/json; charset=utf-8");
@@ -186,6 +190,15 @@ public class ConnectionPageActivity extends AppCompatActivity {
         back = findViewById(R.id.edit_back_button);
         conName = findViewById(R.id.conName);
         credOffer = findViewById(R.id.credOffer);
+        viewCredential = findViewById(R.id.viewCredential);
+        storeCrdential = findViewById(R.id.storeCredential);
+        credential = findViewById(R.id.credential);
+        viewCredButton = findViewById(R.id.viewCredButton);
+        attributes = findViewById(R.id.attributes);
+
+        viewCredential.setVisibility(View.GONE);
+        storeCrdential.setVisibility(View.GONE);
+        credential.setVisibility(View.GONE);
 
         Bundle bundle  =  getIntent().getExtras();
         ConDid = bundle.getString("did");
@@ -234,7 +247,7 @@ public class ConnectionPageActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 try{
-                    /*listenForCredentialOfferPost(url+"listenForCredentialOffer",requestBody);
+                    listenForCredentialOfferPost(url+"listenForCredentialOffer",requestBody);
                     String credOfferStatus = myPrefs.getString("listenForCredentialOffer",null);
 
                      JSONArray arr = new JSONArray(credOfferStatus);
@@ -245,8 +258,19 @@ public class ConnectionPageActivity extends AppCompatActivity {
                         credOffer.append("\nsenderdid:"+j.getString("senderdid"));
                         credOffer.append("\nrecipientdid:"+j.getString("recipientdid"));
                         credOffer.append("\nstatus"+j.getString("status"));
-                    }*/
+                    }
 
+                    viewCredential.setVisibility(View.VISIBLE);
+                }
+                catch(final Exception e){}
+            }
+        });
+
+        viewCredential.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try{
                     JSONObject credReqBody = new JSONObject();
                     try {
                         credReqBody.put("recipientDid", ConDid);
@@ -254,11 +278,12 @@ public class ConnectionPageActivity extends AppCompatActivity {
                         credReqBody.put("did", did);
                     }
                     catch(JSONException e){ }
-                    /*String credReq = credReqBody.toString();
+                    String credReq = credReqBody.toString();
+
                     createCredentialRequestPost(url+"createCredentialRequest",credReq,token);
                     String credReqResponse = myPrefs.getString("createCredentialRequest", null);
                     credOffer.append("\n\n"+credReqResponse);
-*/
+
                     credReqBody.remove("did");
                     credReqBody.put("name","College id2");
                     String credBody = credReqBody.toString();
@@ -268,6 +293,21 @@ public class ConnectionPageActivity extends AppCompatActivity {
                     credOffer.setText(credentials);
                 }
                 catch(final Exception e){}
+
+            }
+        });
+
+        storeCrdential.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        viewCredButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
